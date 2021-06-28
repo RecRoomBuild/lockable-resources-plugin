@@ -20,8 +20,10 @@ import hudson.util.FormValidation;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.json.JSONObject;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.SecureGroovyScript;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -126,6 +128,7 @@ public class RequiredResourcesProperty extends JobProperty<Job<?, ?>> {
 	}
 
 	@Extension
+  @Symbol("requiredResources")
 	public static class DescriptorImpl extends JobPropertyDescriptor {
 
 		@Override
@@ -135,7 +138,8 @@ public class RequiredResourcesProperty extends JobProperty<Job<?, ?>> {
 
 		@Override
 		public boolean isApplicable(Class<? extends Job> jobType) {
-			return AbstractProject.class.isAssignableFrom(jobType);
+			return AbstractProject.class.isAssignableFrom(jobType)
+        || WorkflowJob.class.isAssignableFrom(jobType);
 		}
 
 		@Override

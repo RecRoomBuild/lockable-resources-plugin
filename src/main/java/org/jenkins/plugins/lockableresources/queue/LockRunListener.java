@@ -24,6 +24,7 @@ import org.jenkins.plugins.lockableresources.LockableResource;
 import org.jenkins.plugins.lockableresources.LockableResourcesManager;
 import org.jenkins.plugins.lockableresources.actions.LockedResourcesBuildAction;
 import org.jenkins.plugins.lockableresources.actions.ResourceVariableNameAction;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
 @Extension
 public class LockRunListener extends RunListener<Run<?, ?>> {
@@ -39,41 +40,39 @@ public class LockRunListener extends RunListener<Run<?, ?>> {
 		if (build instanceof MatrixBuild)
 			return;
 
-		if (build instanceof AbstractBuild) {
+		if (build instanceof AbstractBuild || build instanceof WorkflowRun) {
 			Job<?, ?> proj = Utils.getProject(build);
 			Set<LockableResource> required = new HashSet<>();
-			if (proj != null) {
-				LockableResourcesStruct resources = Utils.requiredResources(proj);
+      LockableResourcesStruct resources = Utils.requiredResources(proj);
 
-				if (resources != null) {
-					if (resources.requiredNumber != null || !resources.label.isEmpty() || resources.getResourceMatchScript() != null) {
-						required.addAll(LockableResourcesManager.get().
-								getResourcesFromProject(proj.getFullName()));
-					} else {
-						required.addAll(resources.required);
-					}
+      if (resources != null) {
+        if (resources.requiredNumber != null || !resources.label.isEmpty() || resources.getResourceMatchScript() != null) {
+          required.addAll(LockableResourcesManager.get().
+              getResourcesFromProject(proj.getFullName()));
+        } else {
+          required.addAll(resources.required);
+        }
 
-					if (LockableResourcesManager.get().lock(required, build, null)) {
-						build.addAction(LockedResourcesBuildAction
-								.fromResources(required));
-						listener.getLogger().printf("%s acquired lock on %s%n",
-								LOG_PREFIX, required);
-						LOGGER.fine(build.getFullDisplayName()
-								+ " acquired lock on " + required);
-						if (resources.requiredVar != null) {
-							build.addAction(new ResourceVariableNameAction(new StringParameterValue(
-									resources.requiredVar,
-									required.toString().replaceAll("[\\]\\[]", ""))));
-						}
-					} else {
-						listener.getLogger().printf("%s failed to lock %s%n",
-								LOG_PREFIX, required);
-						LOGGER.fine(build.getFullDisplayName() + " failed to lock "
-								+ required);
-					}
-				}
-			}
-		}
+        if (LockableResourcesManager.get().lock(required, build, null)) {
+          build.addAction(LockedResourcesBuildAction
+              .fromResources(required));
+          listener.getLogger().printf("%s acquired lock on %s%n",
+              LOG_PREFIX, required);
+          LOGGER.fine(build.getFullDisplayName()
+              + " acquired lock on " + required);
+          if (resources.requiredVar != null) {
+            build.addAction(new ResourceVariableNameAction(new StringParameterValue(
+                resources.requiredVar,
+                required.toString().replaceAll("[\\]\\[]", ""))));
+          }
+        } else {
+          listener.getLogger().printf("%s failed to lock %s%n",
+              LOG_PREFIX, required);
+          LOGGER.fine(build.getFullDisplayName() + " failed to lock "
+              + required);
+        }
+      }
+    }
 	}
 
 	@Override
