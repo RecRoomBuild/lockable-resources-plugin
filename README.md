@@ -5,7 +5,7 @@
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/lockable-resources.svg?color=blue)](https://plugins.jenkins.io/lockable-resources)
 [![Build Status](https://ci.jenkins.io/buildStatus/icon?job=Plugins%2Flockable-resources-plugin%2Fmaster)](https://ci.jenkins.io/job/Plugins/job/lockable-resources-plugin/job/master/)
 [![GitHub license](https://img.shields.io/github/license/jenkinsci/lockable-resources-plugin.svg)](https://github.com/jenkinsci/lockable-resources-plugin/blob/master/LICENSE.txt)
-[![Maintenance](https://img.shields.io/maintenance/yes/2021.svg)](https://github.com/jenkinsci/lockable-resources-plugin)
+[![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)](https://github.com/jenkinsci/lockable-resources-plugin)
 
 This plugin allows defining lockable resources (such as printers, phones,
 computers, etc.) that can be used by builds. If a build requires a resource
@@ -122,7 +122,7 @@ If you have the proper environment, typing:
 
 should create a plugin as `target/*.hpi`, which you can install in your Jenkins instance. Running
 
-    $ mvn hpi:run -Djenkins.version=2.222.4
+    $ mvn hpi:run -Djenkins.version=2.249.1
 
 allows you to spin up a test Jenkins instance on [localhost] to test your
 local changes before committing.
@@ -151,5 +151,6 @@ The MIT License (MIT)
 - Copyright 2013-2015 6WIND
 - Copyright 2016-2018 Antonio Muñiz
 - Copyright 2019 TobiX
+- Copyright 2017-2022 Jim Klimov
 
 See [LICENSE](LICENSE.txt)
